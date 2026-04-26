@@ -1,10 +1,12 @@
-﻿name: PR Security Scans
+﻿name: VK-Paints CI/CD
 on:
   pull_request:
     branches: [ main ]
+  push:
+    branches: [ main ]
 jobs:
-  scans:
-    uses: VK-Paints/vkpaints-workflow/.github/workflows/pr-scans.yml@main
+  pipeline:
+    uses: VK-Paints/vkpaints-workflow/.github/workflows/unified-pipeline.yml@main
     with:
       service_name: notification-service
       smtp_server: ${{ vars.SMTP_SERVER }}
