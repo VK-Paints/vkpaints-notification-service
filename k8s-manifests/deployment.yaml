@@ -1,4 +1,4 @@
-﻿apiVersion: apps/v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: notification-deploy
@@ -34,7 +34,7 @@ spec:
         - configMapRef:
             name: notification-config
         - secretRef:
-            name: notification-secret
+            name: notification-service-secret
         livenessProbe:
           httpGet:
             path: /health
