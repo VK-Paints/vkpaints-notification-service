@@ -12,10 +12,24 @@ spec:
       labels:
         app: notification-service
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels:
+                app: notification-service
+            topologyKey: "kubernetes.io/hostname"
       containers:
       - name: notification-container
-        image: shubha20/vk-paints_notification-service:v1.0.0
+        image: ghcr.io/vk-paints/vkpaints-notification-service:v1.0.0
         imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
         envFrom:
         - configMapRef:
             name: notification-config
@@ -34,4 +48,5 @@ spec:
           initialDelaySeconds: 5
           periodSeconds: 10
 
+        ports:
         - containerPort: 3000
