@@ -3,11 +3,27 @@ const { handleOrderNotification } = require('./src/workers/order.worker');
 
 const QUEUE_NAME = 'order_notifications';
 
+const { register } = require('./src/config/metrics');
+const express = require('express');
+
 const start = async () => {
   try {
     console.log('🚀 Starting Notification Service...');
     
-    // Connect to RabbitMQ and start consuming
+    // 1. Start Metrics/Health Server
+    const app = express();
+    app.get('/health', (req, res) => res.status(200).json({ status: 'UP' }));
+    app.get('/metrics', async (req, res) => {
+      res.set('Content-Type', register.contentType);
+      res.end(await register.metrics());
+    });
+    
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+      console.log(`📊 Metrics server running on port ${PORT}`);
+    });
+
+    // 2. Connect to RabbitMQ and start consuming
     await connectRabbitMQ(QUEUE_NAME, handleOrderNotification);
     
   } catch (err) {
