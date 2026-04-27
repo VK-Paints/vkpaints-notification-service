@@ -8,14 +8,15 @@ register.setDefaultLabels({
 
 promClient.collectDefaultMetrics({ register });
 
-// Custom metric for processed notifications
-const notificationsProcessedCounter = new promClient.Counter({
-  name: 'notifications_processed_total',
-  help: 'Total number of processed notifications',
-  labelNames: ['status']
+// RabbitMQ Metrics
+const mqMessageCounter = new promClient.Counter({
+  name: 'mq_messages_total',
+  help: 'Total number of messages processed via RabbitMQ',
+  labelNames: ['action', 'status']
 });
+register.registerMetric(mqMessageCounter);
 
 module.exports = {
   register,
-  notificationsProcessedCounter
+  mqMessageCounter
 };

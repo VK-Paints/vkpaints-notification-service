@@ -1,4 +1,5 @@
 const emailService = require('../services/email.service');
+const { mqMessageCounter } = require('../config/metrics');
 
 const handleOrderNotification = async (data) => {
   try {
@@ -15,8 +16,10 @@ const handleOrderNotification = async (data) => {
       info = await emailService.sendStatusUpdate(data.email, data.order);
       console.log(`[Email Sent to Customer] ID: ${info.messageId}`);
     }
+    mqMessageCounter.labels(data.event || 'UNKNOWN', 'success').inc();
   } catch (error) {
     console.error('❌ Failed to process order notification:', error.message);
+    mqMessageCounter.labels(data.event || 'UNKNOWN', 'failure').inc();
   }
 };
 
