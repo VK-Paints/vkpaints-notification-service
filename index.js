@@ -20,13 +20,22 @@ const start = async () => {
     });
     
     const PORT = process.env.PORT || 8080;
-    app.listen(PORT, '0.0.0.0', () => {
+    const server = app.listen(PORT, '0.0.0.0');
+
+    server.on('listening', async () => {
       console.log(`📊 Metrics & Health server running on port ${PORT}`);
+      try {
+        console.log('🔌 Connecting to RabbitMQ...');
+        await connectRabbitMQ(QUEUE_NAME, handleOrderNotification);
+      } catch (err) {
+        console.error('❌ RabbitMQ connection failed during startup:', err.message);
+      }
     });
 
-    // 2. Connect to RabbitMQ and start consuming
-    console.log('🔌 Connecting to RabbitMQ...');
-    await connectRabbitMQ(QUEUE_NAME, handleOrderNotification);
+    server.on('error', (err) => {
+      console.error('❌ Server failed to start:', err.message);
+      process.exit(1);
+    });
     
   } catch (err) {
     console.error('❌ Notification Service startup failed:', err.message);
