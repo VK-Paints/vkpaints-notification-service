@@ -13,12 +13,13 @@ const start = async () => {
     // 1. Start Metrics/Health Server
     const app = express();
     app.get('/health', (req, res) => res.status(200).json({ status: 'UP' }));
+    app.get('/actuator/health', (req, res) => res.status(200).json({ status: 'UP' }));
     app.get('/metrics', async (req, res) => {
       res.set('Content-Type', register.contentType);
       res.end(await register.metrics());
     });
     
-    const PORT = process.env.PORT || 3000;
+    const PORT = process.env.PORT || 8080;
     app.listen(PORT, '0.0.0.0', () => {
       console.log(`📊 Metrics & Health server running on port ${PORT}`);
     });
