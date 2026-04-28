@@ -19,11 +19,12 @@ const start = async () => {
     });
     
     const PORT = process.env.PORT || 3000;
-    app.listen(PORT, () => {
-      console.log(`📊 Metrics server running on port ${PORT}`);
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`📊 Metrics & Health server running on port ${PORT}`);
     });
 
     // 2. Connect to RabbitMQ and start consuming
+    console.log('🔌 Connecting to RabbitMQ...');
     await connectRabbitMQ(QUEUE_NAME, handleOrderNotification);
     
   } catch (err) {
